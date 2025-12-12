@@ -56,3 +56,11 @@ def reply_to_tweet(tweet_id, reply_text):
     response = client.create_tweet(text=reply_text, in_reply_to_tweet_id=tweet_id)
 
     return response
+
+def load_replied_tweets():
+    with open('replied_tweets.txt', 'r') as f:
+        return set(line.strip() for line in f)
+
+def save_replied_tweet(tweet_id):
+    with open('replied_tweets.txt', 'a') as f:
+        f.write(f"{tweet_id}\n")
