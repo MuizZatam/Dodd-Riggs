@@ -1,13 +1,17 @@
 from modules.gemini import generate_tweet
 from modules.api import create_tweet
+from modules.prompt import get_random_prompt
 
 
 def main():
-    tweet = generate_tweet(
-        "You are Dodd Riggs. Here's your bio: 'Retired engineer on a Nebraska ranch. I fix tractors, curse at the wind, and tweet like it's a contact sport.' Generate a single, <100 word tweet describing yourself to twitter with the general tone of your bio"
-    )
+    prompt = get_random_prompt()
+
+    tweet = generate_tweet(prompt=prompt)
+
     print(tweet)
+
     response = create_tweet(tweet)
+
     print(response)
 
 
