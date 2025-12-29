@@ -29,12 +29,10 @@ jobs:
         cd src
         uv pip install --system tweepy google-genai python-dotenv
         
-    - name: Download replied tweets history
-      uses: actions/download-artifact@v4
-      with:
-        name: replied-tweets
-        path: replied_tweets.txt
-      continue-on-error: true
+    - name: Create replied_tweets.txt if it doesn't exist
+      run: |
+        cd src
+        touch replied_tweets.txt
         
     - name: Run bot
       env:
@@ -43,14 +41,15 @@ jobs:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
         BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
-        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: |
         cd src
         python main.py
         
-    - name: Upload replied tweets history
-      uses: actions/upload-artifact@v4
-      with:
-        name: replied-tweets
-        path: replied_tweets.txt
-        retention-days: 90
+    - name: Commit updated replied_tweets.txt
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add replied_tweets.txt
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update replied tweets [skip ci]"
+        git push
