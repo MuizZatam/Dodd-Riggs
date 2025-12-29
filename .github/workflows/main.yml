@@ -1,0 +1,56 @@
+name: Dodd Riggs Bot
+
+on:
+  schedule:
+    # Run twice a day: 9 AM and 9 PM UTC
+    - cron: '0 9,21 * * *'
+  workflow_dispatch:
+
+jobs:
+  reply-to-mentions:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+        
+    - name: Install dependencies
+      run: |
+        cd src
+        uv pip install --system tweepy google-genai python-dotenv
+        
+    - name: Download replied tweets history
+      uses: actions/download-artifact@v4
+      with:
+        name: replied-tweets
+        path: src/
+      continue-on-error: true
+        
+    - name: Run bot
+      env:
+        CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
+        CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+        BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      run: |
+        cd src
+        python main.py
+        
+    - name: Upload replied tweets history
+      uses: actions/upload-artifact@v4
+      with:
+        name: replied-tweets
+        path: src/replied_tweets.txt
+        retention-days: 90
