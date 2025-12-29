@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  reply-to-mentions:
+  tweet-and-reply-to-mentions:
     runs-on: ubuntu-latest
     
     steps:
