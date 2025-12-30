@@ -46,8 +46,7 @@ jobs:
         BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
         GOOGLE_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: |
-        cd src
-        python main.py
+        python src/main.py
         
     - name: Commit updated replied_tweets.txt
       run: |
