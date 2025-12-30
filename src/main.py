@@ -1,7 +1,7 @@
 from modules.gemini import generate_tweet
 from modules.api import create_tweet, reply_to_tweet, get_mentions, load_replied_tweets, save_replied_tweet
 from modules.prompt import get_random_prompt
-
+from random import choice
 
 def reply_to_mentions():
 
@@ -49,8 +49,10 @@ def post_usual_tweet():
 
 
 def main():
-    reply_to_mentions()
-    post_usual_tweet()
+    if choice([True, False]):
+        reply_to_mentions()
+    else:
+        post_usual_tweet()
 
 
 if __name__ == "__main__":
